@@ -1,12 +1,12 @@
 package com.connectinghands.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 /**
- * Data Transfer Object for creating a new resource.
+ * Data Transfer Object for creating a new resource request.
  * Contains validation annotations to ensure data integrity.
  *
  * @author Ragul Venkatesan
@@ -34,10 +34,10 @@ public class CreateResourceRequest {
 
     /**
      * Initial quantity of the resource.
-     * Must be a positive number.
+     * Must be at least 1.
      */
     @NotNull(message = "Quantity is required")
-    @Positive(message = "Quantity must be positive")
+    @Min(value = 1, message = "Quantity must be at least 1")
     private Integer quantity;
 
     /**

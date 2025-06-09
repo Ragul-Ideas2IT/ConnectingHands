@@ -1,10 +1,12 @@
 package com.connectinghands.dto;
 
-import jakarta.validation.constraints.Positive;
+import com.connectinghands.entity.ResourceRequestStatus;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
- * Data Transfer Object for updating an existing resource.
+ * Data Transfer Object for updating an existing resource request.
  * Contains validation annotations to ensure data integrity.
  *
  * @author Ragul Venkatesan
@@ -28,13 +30,18 @@ public class UpdateResourceRequest {
 
     /**
      * Updated quantity of the resource.
-     * Must be a positive number if provided.
+     * Must be at least 1 if provided.
      */
-    @Positive(message = "Quantity must be positive")
+    @Min(value = 1, message = "Quantity must be at least 1")
     private Integer quantity;
 
     /**
      * Updated unit of measurement for the resource.
      */
     private String unit;
+
+    /**
+     * Updated status of the resource request.
+     */
+    private ResourceRequestStatus status;
 } 
