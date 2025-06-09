@@ -34,29 +34,34 @@
   - Added basic application test
   - Configured actuator endpoints for monitoring
 
-### BE-002: Security Infrastructure
-- **Title**: Implement JWT-based authentication system
-- **Description**: Set up JWT authentication, authorization, and security configurations
+### BE-002: Security Infrastructure ✅
+- **Title**: Implement JWT-based authentication and authorization
+- **User Story**: As a user, I want to securely authenticate and access protected resources
+- **Description**: Implement JWT-based authentication system with role-based authorization
 - **Dependencies**: BE-001
 - **Complexity**: Medium (5 points)
 - **Technical Requirements**:
-  - Spring Security
-  - JWT implementation
-  - User authentication endpoints
+  - JWT token generation and validation
+  - User roles and permissions
+  - Password encryption
+  - Email verification
+  - Password reset functionality
 - **Acceptance Criteria**:
-  - JWT token generation and validation working
-  - Role-based access control implemented
-  - Security configurations properly set
-  - Rate limiting implemented
+  - Users can register with email and password
+  - Users can login and receive JWT token
+  - JWT token is validated for protected endpoints
+  - Email verification flow works
+  - Password reset flow works
+  - Role-based access control is implemented
 - **Implementation Details**:
-  - Implemented JWT token provider and authentication filter
-  - Created user entity and repository
-  - Set up authentication controller with login/register endpoints
-  - Implemented role-based access control
-  - Added CORS configuration
-  - Created comprehensive test coverage
-  - Added rate limiting through Spring Security
-  - Implemented proper error handling
+  - Created JwtTokenProvider for token management
+  - Implemented JwtAuthenticationFilter for token validation
+  - Created User entity with role-based authorization
+  - Implemented UserDetailsService for Spring Security
+  - Added email verification and password reset functionality
+  - Created AuthController with registration and login endpoints
+  - Added comprehensive test coverage
+  - Implemented proper validation and error handling
 
 ### BE-003: Database Migration Setup
 - **Title**: Configure database migration system
