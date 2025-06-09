@@ -1,5 +1,11 @@
 package com.connectinghands.service;
 
+import com.connectinghands.dto.AuditLogDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.time.LocalDateTime;
+
 /**
  * Service interface for managing audit logs.
  * 
@@ -29,4 +35,12 @@ public interface AuditLogService {
      * @param entityId the ID of the entity being acted upon
      */
     void logAction(String action, String description, Long entityId);
+
+    Page<AuditLogDto> getAuditLogs(Long userId, String action, String entityType, Long entityId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+    
+    AuditLogDto getAuditLog(Long id);
+    
+    Page<AuditLogDto> getUserAuditLogs(Long userId, String action, String entityType, Long entityId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+    
+    Page<AuditLogDto> getEntityAuditLogs(String entityType, Long entityId, Long userId, String action, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 } 
