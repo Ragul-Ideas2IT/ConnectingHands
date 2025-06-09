@@ -2,23 +2,26 @@ package com.connectinghands.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data
+/**
+ * Entity representing an audit log entry.
+ * 
+ * @author Ragul Venkatesan
+ */
 @Entity
 @Table(name = "audit_logs")
-@EntityListeners(AuditingEntityListener.class)
+@Data
+@NoArgsConstructor
 public class AuditLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Column(nullable = false)
     private String action;
@@ -26,22 +29,21 @@ public class AuditLog {
     @Column(name = "entity_type", nullable = false)
     private String entityType;
 
-    @Column(name = "entity_id")
+    @Column(name = "entity_id", nullable = false)
     private Long entityId;
 
-    @Column(name = "old_value")
+    @Column(name = "old_value", columnDefinition = "TEXT")
     private String oldValue;
 
-    @Column(name = "new_value")
+    @Column(name = "new_value", columnDefinition = "TEXT")
     private String newValue;
+
+    @Column(name = "additional_info", columnDefinition = "TEXT")
+    private String additionalInfo;
 
     @Column(name = "ip_address")
     private String ipAddress;
 
-    @Column(name = "user_agent")
-    private String userAgent;
-
-    @CreatedDate
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private LocalDateTime timestamp;
 } 
