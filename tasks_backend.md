@@ -88,24 +88,37 @@
   - Added repository test for audit logs
   - Verified database health check via actuator
 
-## Core Domain Implementation
-
-### BE-004: User Management
-- **Title**: Implement user management functionality
-- **User Story**: "As a user, I want to register and manage my account"
-- **Description**: Implement user registration, profile management, and authentication
-- **Dependencies**: BE-002, BE-003
+### BE-004: User Management ✅
+- **Title**: Implement user management system
+- **User Story**: As a user, I want to manage my profile, reset my password, and verify my email
+- **Description**: Create user management features including profile management, password reset, and email verification
+- **Dependencies**: BE-001, BE-002, BE-003
 - **Complexity**: Medium (5 points)
 - **Technical Requirements**:
-  - User entity implementation
-  - User registration endpoint
-  - User profile management endpoints
-- **Acceptance Criteria**:
-  - User registration working
-  - Profile updates possible
+  - User profile management
   - Password reset functionality
-  - Email verification (if required)
-- **Notes**: Implement proper validation and security measures
+  - Email verification
+  - Audit logging for user actions
+  - Proper validation and error handling
+  - Comprehensive test coverage
+- **Acceptance Criteria**:
+  - Users can view and update their profiles
+  - Password reset flow implemented
+  - Email verification implemented
+  - Proper validation and error handling
+  - Audit logging for user actions
+  - Comprehensive test coverage
+- **Implementation Details**:
+  - Created user profile DTOs and endpoints
+  - Implemented profile update functionality
+  - Added password reset request and reset endpoints
+  - Added email verification endpoints
+  - Updated database schema for tokens
+  - Added comprehensive test coverage
+  - Implemented proper validation
+  - Added audit logging for user actions
+
+## Core Domain Implementation
 
 ### BE-005: Orphanage Management
 - **Title**: Implement orphanage management system
@@ -372,7 +385,7 @@ graph TD
 | BE-001 | Project Setup | Completed | - | - | - |
 | BE-002 | Security Infrastructure | Completed | - | - | - |
 | BE-003 | Database Migration | Completed | - | - | - |
-| BE-004 | User Management | Not Started | - | - | - |
+| BE-004 | User Management | Completed | - | - | - |
 | ... | ... | ... | ... | ... | ... |
 
 ## Notes
