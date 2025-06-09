@@ -138,7 +138,7 @@
 - **Notes**: Consider implementing caching for frequently accessed data
 
 ### BE-006: Resource Management
-- **Title**: Implement resource tracking system
+- **Title**: Implement resource management features
 - **User Story**: "As an orphanage administrator, I want to manage our resources"
 - **Description**: Implement resource tracking, inventory management, and stock updates
 - **Dependencies**: BE-005
@@ -153,6 +153,18 @@
   - Category management functional
   - Minimum quantity alerts working
 - **Notes**: Implement optimistic locking for concurrent updates
+- **Implementation Details**:
+  - Created Resource entity with JPA annotations and auditing
+  - Implemented ResourceRepository for database operations
+  - Created DTOs: ResourceDto, CreateResourceRequest, UpdateResourceRequest
+  - Implemented ResourceService with CRUD operations and audit logging
+  - Created ResourceController with secured endpoints
+  - Added comprehensive test coverage in ResourceControllerTest
+  - All endpoints properly secured with role-based access control
+  - Added validation annotations for request DTOs
+  - Implemented proper error handling and response codes
+  - Added audit logging for all resource operations
+  - Test coverage includes security constraints and CRUD operations
 
 ### BE-007: Donation System
 - **Title**: Implement donation management system
@@ -386,6 +398,7 @@ graph TD
 | BE-002 | Security Infrastructure | Completed | - | - | - |
 | BE-003 | Database Migration | Completed | - | - | - |
 | BE-004 | User Management | Completed | - | - | - |
+| BE-006 | Resource Management | Completed | - | - | - |
 | ... | ... | ... | ... | ... | ... |
 
 ## Notes
