@@ -11,6 +11,7 @@ import com.connectinghands.repository.OrphanageRepository;
 import com.connectinghands.repository.ResourceRepository;
 import com.connectinghands.repository.ResourceRequestRepository;
 import com.connectinghands.service.ReportService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,9 +21,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the ReportService interface.
+ * Handles generation of donation and resource utilization reports.
+ *
+ * @author Ragul Venkatesan
+ */
 @Service
 @RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService {
@@ -33,19 +42,12 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     @Transactional(readOnly = true)
-    public DonationReportDto generateDonationReport(
-            Long orphanageId,
-            LocalDateTime startDate,
-            LocalDateTime endDate,
-            String reportType,
-            String currency,
-            String timeZone) {
-        
+    public DonationReportDto generateDonationReport(Long orphanageId, LocalDateTime startDate, LocalDateTime endDate,
+            String reportType, String currency, String timeZone) {
         Orphanage orphanage = orphanageRepository.findById(orphanageId)
-                .orElseThrow(() -> new RuntimeException("Orphanage not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Orphanage not found"));
 
-        List<Donation> donations = donationRepository.findByOrphanageIdAndTimestampBetween(
-                orphanageId, startDate, endDate);
+        List<Donation> donations = donationRepository.findByOrphanageIdAndCreatedAtBetween(orphanageId, startDate, endDate);
 
         DonationReportDto report = new DonationReportDto();
         report.setOrphanageId(orphanageId);
@@ -56,170 +58,72 @@ public class ReportServiceImpl implements ReportService {
         report.setCurrency(currency);
         report.setTimeZone(timeZone);
 
-        // Calculate totals
         report.setTotalDonations((long) donations.size());
-        report.setTotalMonetaryAmount(calculateTotalMonetaryAmount(donations, currency));
-        report.setTotalResourceDonations(calculateTotalResourceDonations(donations));
+        report.setTotalMonetaryAmount(donations.stream()
+                .filter(d -> d.getAmount() != null)
+                .map(Donation::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
+        report.setTotalResourceDonations(donations.stream()
+                .filter(d -> d.getAmount() == null)
+                .count());
 
         return report;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<DonationReportDto> generateDonationReports(
-            LocalDateTime startDate,
-            LocalDateTime endDate,
-            String reportType,
-            String currency,
-            String timeZone,
-            Pageable pageable) {
-        
-        List<Orphanage> orphanages = orphanageRepository.findAll(pageable).getContent();
-        List<DonationReportDto> reports = orphanages.stream()
-                .map(orphanage -> generateDonationReport(
-                        orphanage.getId(), startDate, endDate, reportType, currency, timeZone))
+    public Page<DonationReportDto> generateDonationReports(LocalDateTime startDate, LocalDateTime endDate,
+            String reportType, String currency, String timeZone, Pageable pageable) {
+        Page<Orphanage> orphanages = orphanageRepository.findAll(pageable);
+
+        List<DonationReportDto> reports = orphanages.getContent().stream()
+                .map(orphanage -> generateDonationReport(orphanage.getId(), startDate, endDate, reportType, currency, timeZone))
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(reports, pageable, orphanages.size());
+        return new PageImpl<>(reports, pageable, orphanages.getTotalElements());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ResourceUtilizationReportDto generateResourceUtilizationReport(
-            Long orphanageId,
-            LocalDateTime startDate,
-            LocalDateTime endDate,
-            String reportType,
-            String timeZone) {
-        
+    public ResourceUtilizationReportDto generateResourceUtilizationReport(Long orphanageId) {
         Orphanage orphanage = orphanageRepository.findById(orphanageId)
-                .orElseThrow(() -> new RuntimeException("Orphanage not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Orphanage not found"));
 
         List<Resource> resources = resourceRepository.findByOrphanageId(orphanageId);
-        List<ResourceRequest> requests = resourceRequestRepository.findByOrphanageIdAndTimestampBetween(
-                orphanageId, startDate, endDate);
+        Map<String, Long> utilizationMap = new HashMap<>();
+
+        for (Resource resource : resources) {
+            utilizationMap.put(resource.getName(), resource.getQuantity().longValue());
+        }
 
         ResourceUtilizationReportDto report = new ResourceUtilizationReportDto();
-        report.setOrphanageId(orphanageId);
         report.setOrphanageName(orphanage.getName());
-        report.setStartDate(startDate);
-        report.setEndDate(endDate);
-        report.setReportType(reportType);
-        report.setTimeZone(timeZone);
-
-        // Calculate resource utilization
-        Map<String, Long> utilization = calculateResourceUtilization(resources);
-        report.setResourceUtilization(utilization);
-
-        // Calculate resource requests
-        Map<String, Long> requestCounts = calculateResourceRequests(requests);
-        report.setResourceRequests(requestCounts);
-
-        // Calculate resource donations
-        Map<String, Long> donationCounts = calculateResourceDonations(resources);
-        report.setResourceDonations(donationCounts);
-
-        // Identify low stock resources
-        report.setLowStockResources(identifyLowStockResources(resources));
-
-        // Identify high demand resources
-        report.setHighDemandResources(identifyHighDemandResources(requestCounts));
-
+        report.setResourceUtilization(utilizationMap);
         return report;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ResourceUtilizationReportDto> generateResourceUtilizationReports(
-            LocalDateTime startDate,
-            LocalDateTime endDate,
-            String reportType,
-            String timeZone,
-            Pageable pageable) {
-        
-        List<Orphanage> orphanages = orphanageRepository.findAll(pageable).getContent();
-        List<ResourceUtilizationReportDto> reports = orphanages.stream()
-                .map(orphanage -> generateResourceUtilizationReport(
-                        orphanage.getId(), startDate, endDate, reportType, timeZone))
+    public Page<ResourceUtilizationReportDto> generateResourceUtilizationReports(LocalDateTime startDate,
+            LocalDateTime endDate, String reportType, String timeZone, Pageable pageable) {
+        Page<Orphanage> orphanages = orphanageRepository.findAll(pageable);
+
+        List<ResourceUtilizationReportDto> reports = orphanages.getContent().stream()
+                .map(orphanage -> generateResourceUtilizationReport(orphanage.getId()))
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(reports, pageable, orphanages.size());
+        return new PageImpl<>(reports, pageable, orphanages.getTotalElements());
     }
 
     @Override
-    public byte[] exportDonationReport(
-            Long orphanageId,
-            LocalDateTime startDate,
-            LocalDateTime endDate,
-            String reportType,
-            String currency,
-            String timeZone,
-            String format) {
-        // TODO: Implement export functionality
+    public byte[] exportDonationReport(Long orphanageId, LocalDateTime startDate, LocalDateTime endDate,
+            String reportType, String currency, String timeZone, String format) {
         throw new UnsupportedOperationException("Export functionality not implemented yet");
     }
 
     @Override
-    public byte[] exportResourceUtilizationReport(
-            Long orphanageId,
-            LocalDateTime startDate,
-            LocalDateTime endDate,
-            String reportType,
-            String timeZone,
-            String format) {
-        // TODO: Implement export functionality
+    public byte[] exportResourceUtilizationReport(Long orphanageId, LocalDateTime startDate, LocalDateTime endDate,
+            String reportType, String timeZone, String format) {
         throw new UnsupportedOperationException("Export functionality not implemented yet");
-    }
-
-    private BigDecimal calculateTotalMonetaryAmount(List<Donation> donations, String currency) {
-        return donations.stream()
-                .filter(donation -> donation.getAmount() != null)
-                .map(Donation::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    private Long calculateTotalResourceDonations(List<Donation> donations) {
-        return donations.stream()
-                .filter(donation -> donation.getResource() != null)
-                .count();
-    }
-
-    private Map<String, Long> calculateResourceUtilization(List<Resource> resources) {
-        return resources.stream()
-                .collect(Collectors.toMap(
-                        Resource::getName,
-                        resource -> resource.getQuantity() - resource.getCurrentQuantity()
-                ));
-    }
-
-    private Map<String, Long> calculateResourceRequests(List<ResourceRequest> requests) {
-        return requests.stream()
-                .collect(Collectors.groupingBy(
-                        request -> request.getResource().getName(),
-                        Collectors.counting()
-                ));
-    }
-
-    private Map<String, Long> calculateResourceDonations(List<Resource> resources) {
-        return resources.stream()
-                .collect(Collectors.toMap(
-                        Resource::getName,
-                        resource -> resource.getQuantity() - resource.getCurrentQuantity()
-                ));
-    }
-
-    private List<String> identifyLowStockResources(List<Resource> resources) {
-        return resources.stream()
-                .filter(resource -> resource.getCurrentQuantity() <= resource.getMinimumQuantity())
-                .map(Resource::getName)
-                .collect(Collectors.toList());
-    }
-
-    private List<String> identifyHighDemandResources(Map<String, Long> requestCounts) {
-        return requestCounts.entrySet().stream()
-                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-                .limit(5)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
     }
 } 

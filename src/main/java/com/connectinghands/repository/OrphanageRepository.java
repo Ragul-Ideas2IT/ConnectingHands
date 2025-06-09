@@ -40,9 +40,10 @@ public interface OrphanageRepository extends JpaRepository<Orphanage, Long> {
      * Find orphanages by their admin user ID.
      *
      * @param adminId the ID of the admin user
-     * @return a list of orphanages managed by the specified admin
+     * @param pageable pagination information
+     * @return a page of orphanages managed by the specified admin
      */
-    List<Orphanage> findByAdminId(Long adminId);
+    Page<Orphanage> findByAdminId(Long adminId, Pageable pageable);
 
     /**
      * Find orphanages by city.

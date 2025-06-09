@@ -3,8 +3,10 @@ package com.connectinghands.service;
 import com.connectinghands.dto.CreateResourceRequest;
 import com.connectinghands.dto.ResourceDto;
 import com.connectinghands.dto.UpdateResourceRequest;
-
-import java.util.List;
+import com.connectinghands.entity.ResourceCategory;
+import com.connectinghands.entity.ResourceStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service interface for managing resources.
@@ -30,11 +32,31 @@ public interface ResourceService {
     ResourceDto getResource(Long id);
 
     /**
-     * Retrieves all resources.
+     * Retrieves resources by orphanage.
      *
-     * @return A list of all resource DTOs
+     * @param orphanageId The ID of the orphanage
+     * @param pageable The pageable object
+     * @return A page of resource DTOs
      */
-    List<ResourceDto> getAllResources();
+    Page<ResourceDto> getResourcesByOrphanage(Long orphanageId, Pageable pageable);
+
+    /**
+     * Retrieves resources by category.
+     *
+     * @param category The category of the resources
+     * @param pageable The pageable object
+     * @return A page of resource DTOs
+     */
+    Page<ResourceDto> getResourcesByCategory(ResourceCategory category, Pageable pageable);
+
+    /**
+     * Retrieves resources by status.
+     *
+     * @param status The status of the resources
+     * @param pageable The pageable object
+     * @return A page of resource DTOs
+     */
+    Page<ResourceDto> getResourcesByStatus(ResourceStatus status, Pageable pageable);
 
     /**
      * Updates an existing resource.

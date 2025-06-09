@@ -35,14 +35,15 @@ public class Resource {
     /**
      * Detailed description of the resource.
      */
-    @Column(length = 1000)
+    @Column(nullable = false)
     private String description;
 
     /**
      * Category of the resource (e.g., Food, Clothing, Education).
      */
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String category;
+    private ResourceCategory category;
 
     /**
      * Current quantity of the resource available.
@@ -83,4 +84,36 @@ public class Resource {
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public ResourceCategory getCategory() { return category; }
+    public void setCategory(ResourceCategory category) { this.category = category; }
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public String getUnit() { return unit; }
+    public void setUnit(String unit) { this.unit = unit; }
+    public Orphanage getOrphanage() { return orphanage; }
+    public void setOrphanage(Orphanage orphanage) { this.orphanage = orphanage; }
+    public ResourceStatus getStatus() { return status; }
+    public void setStatus(ResourceStatus status) { this.status = status; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 } 

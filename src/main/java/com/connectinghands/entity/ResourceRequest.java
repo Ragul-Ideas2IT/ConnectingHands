@@ -79,4 +79,29 @@ public class ResourceRequest {
     @LastModifiedBy
     @Column(name = "updated_by")
     private String updatedBy;
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public String getUnit() { return unit; }
+    public void setUnit(String unit) { this.unit = unit; }
+    public Orphanage getOrphanage() { return orphanage; }
+    public void setOrphanage(Orphanage orphanage) { this.orphanage = orphanage; }
+    public ResourceRequestStatus getStatus() { return status; }
+    public void setStatus(ResourceRequestStatus status) { this.status = status; }
+    public Long getFulfilledBy() { return fulfilledBy; }
+    public void setFulfilledBy(Long fulfilledBy) { this.fulfilledBy = fulfilledBy; }
+    public java.time.LocalDateTime getFulfilledAt() { return fulfilledAt; }
+    public void setFulfilledAt(java.time.LocalDateTime fulfilledAt) { this.fulfilledAt = fulfilledAt; }
+    public java.time.LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(java.time.LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public java.time.LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(java.time.LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 } 

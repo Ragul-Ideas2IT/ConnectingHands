@@ -5,6 +5,7 @@ import com.connectinghands.entity.ResourceRequestStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -47,4 +48,14 @@ public interface ResourceRequestRepository extends JpaRepository<ResourceRequest
      * @return List of resource requests matching the criteria
      */
     List<ResourceRequest> findByOrphanageIdAndStatus(Long orphanageId, ResourceRequestStatus status);
+
+    /**
+     * Find all resource requests made by a specific orphanage within a date range.
+     *
+     * @param orphanageId The ID of the orphanage
+     * @param startDate The start date of the range
+     * @param endDate The end date of the range
+     * @return List of resource requests made by the orphanage within the date range
+     */
+    List<ResourceRequest> findByOrphanageIdAndCreatedAtBetween(Long orphanageId, LocalDateTime startDate, LocalDateTime endDate);
 } 

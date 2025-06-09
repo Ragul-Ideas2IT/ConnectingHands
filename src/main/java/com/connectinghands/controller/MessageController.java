@@ -3,12 +3,13 @@ package com.connectinghands.controller;
 import com.connectinghands.dto.CreateMessageRequest;
 import com.connectinghands.dto.MessageDto;
 import com.connectinghands.service.MessageService;
+import com.connectinghands.service.SecurityService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -18,10 +19,16 @@ import org.springframework.web.bind.annotation.*;
  * @author Ragul Venkatesan
  */
 @RestController
-@RequestMapping("/messages")
-@RequiredArgsConstructor
+@RequestMapping("/api/messages")
+@Tag(name = "Message", description = "Message management APIs")
 public class MessageController {
     private final MessageService messageService;
+    private final SecurityService securityService;
+
+    public MessageController(MessageService messageService, SecurityService securityService) {
+        this.messageService = messageService;
+        this.securityService = securityService;
+    }
 
     /**
      * Send a new message to another user.
@@ -31,7 +38,7 @@ public class MessageController {
      * @return The created message
      */
     @PostMapping
-    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Send a message")
     public ResponseEntity<MessageDto> sendMessage(@Valid @RequestBody CreateMessageRequest request) {
         return ResponseEntity.ok(messageService.sendMessage(request));
     }
@@ -40,16 +47,15 @@ public class MessageController {
      * Get a paginated conversation between the current user and another user.
      * Requires authentication.
      *
-     * @param otherUserId The other user's ID
+     * @param userId The other user's ID
      * @param pageable Pagination information
      * @return Page of messages
      */
-    @GetMapping("/conversation/{otherUserId}")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Page<MessageDto>> getConversation(
-            @PathVariable Long otherUserId,
-            Pageable pageable) {
-        return ResponseEntity.ok(messageService.getConversation(otherUserId, pageable));
+    @GetMapping("/conversation/{userId}")
+    @Operation(summary = "Get conversation with a user")
+    public ResponseEntity<Page<MessageDto>> getConversation(@PathVariable Long userId, Pageable pageable) {
+        Long currentUserId = securityService.getCurrentUser().getId();
+        return ResponseEntity.ok(messageService.getConversation(currentUserId, userId, pageable));
     }
 
     /**
@@ -60,9 +66,10 @@ public class MessageController {
      * @return Page of messages
      */
     @GetMapping("/inbox")
-    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Get inbox messages")
     public ResponseEntity<Page<MessageDto>> getInbox(Pageable pageable) {
-        return ResponseEntity.ok(messageService.getInbox(pageable));
+        Long currentUserId = securityService.getCurrentUser().getId();
+        return ResponseEntity.ok(messageService.getInbox(currentUserId, pageable));
     }
 
     /**
@@ -73,23 +80,24 @@ public class MessageController {
      * @return Page of messages
      */
     @GetMapping("/sent")
-    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Get sent messages")
     public ResponseEntity<Page<MessageDto>> getSent(Pageable pageable) {
-        return ResponseEntity.ok(messageService.getSent(pageable));
+        Long currentUserId = securityService.getCurrentUser().getId();
+        return ResponseEntity.ok(messageService.getSent(currentUserId, pageable));
     }
 
     /**
      * Mark a message as read.
      * Requires authentication and the message must be received by the current user.
      *
-     * @param messageId The message ID
+     * @param id The message ID
      * @return No content response
      */
-    @PutMapping("/{messageId}/read")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> markAsRead(@PathVariable Long messageId) {
-        messageService.markAsRead(messageId);
-        return ResponseEntity.noContent().build();
+    @PutMapping("/{id}/read")
+    @Operation(summary = "Mark a message as read")
+    public ResponseEntity<Void> markAsRead(@PathVariable Long id) {
+        messageService.markAsRead(id);
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -99,8 +107,9 @@ public class MessageController {
      * @return The number of unread messages
      */
     @GetMapping("/unread/count")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Long> getUnreadCount() {
-        return ResponseEntity.ok(messageService.countUnread());
+    @Operation(summary = "Get unread message count")
+    public ResponseEntity<Long> countUnread() {
+        Long currentUserId = securityService.getCurrentUser().getId();
+        return ResponseEntity.ok(messageService.countUnread(currentUserId));
     }
 } 

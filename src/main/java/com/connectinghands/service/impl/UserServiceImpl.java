@@ -19,6 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Implementation of the UserService interface.
+ * Handles user management and authentication.
+ *
+ * @author Ragul Venkatesan
+ */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {

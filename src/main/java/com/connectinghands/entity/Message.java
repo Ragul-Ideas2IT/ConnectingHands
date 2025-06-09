@@ -60,4 +60,16 @@ public class Message {
     @LastModifiedBy
     @Column(name = "updated_by")
     private String updatedBy;
+
+    public void setSender(User sender) { this.sender = sender; }
+    public User getSender() { return sender; }
+    public void setReceiver(User receiver) { this.receiver = receiver; }
+    public User getReceiver() { return receiver; }
+    public void setContent(String content) { this.content = content; }
+    public String getContent() { return content; }
+    public void setRead(boolean read) { this.read = read; }
+    public boolean isRead() { return read; }
+    public void setCreatedAt(java.time.LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public java.time.LocalDateTime getCreatedAt() { return createdAt; }
+    public Long getId() { return id; }
 } 

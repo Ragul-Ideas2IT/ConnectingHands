@@ -53,4 +53,11 @@ public class CreateResourceRequest {
      */
     @NotNull(message = "Orphanage ID is required")
     private Long orphanageId;
+
+    public Long getOrphanageId() { return orphanageId; }
+    public String getName() { return name; }
+    public String getDescription() { return description; }
+    public String getCategory() { return category; }
+    public Integer getQuantity() { return quantity; }
+    public String getUnit() { return unit; }
 } 

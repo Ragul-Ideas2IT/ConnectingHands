@@ -19,10 +19,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the OrphanageService interface.
- * 
+ * Handles CRUD operations for orphanages.
+ *
  * @author Ragul Venkatesan
  */
 @Service
@@ -207,7 +210,7 @@ public class OrphanageServiceImpl implements OrphanageService {
             orphanage.setCapacity(request.getCapacity());
         }
         if (request.getStatus() != null) {
-            orphanage.setStatus(request.getStatus());
+            orphanage.setStatus(OrphanageStatus.valueOf(request.getStatus()));
         }
         if (request.getVerificationDocuments() != null) {
             orphanage.setVerificationDocuments(request.getVerificationDocuments());

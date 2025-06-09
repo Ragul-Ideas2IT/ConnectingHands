@@ -1,7 +1,8 @@
 package com.connectinghands.dto;
 
+import com.connectinghands.entity.ResourceCategory;
 import com.connectinghands.entity.ResourceStatus;
-import lombok.Data;
+import java.time.LocalDateTime;
 
 /**
  * Data Transfer Object for Resource entities.
@@ -9,7 +10,6 @@ import lombok.Data;
  *
  * @author Ragul Venkatesan
  */
-@Data
 public class ResourceDto {
     /**
      * Unique identifier of the resource.
@@ -29,7 +29,7 @@ public class ResourceDto {
     /**
      * Category of the resource.
      */
-    private String category;
+    private ResourceCategory category;
 
     /**
      * Current quantity of the resource.
@@ -44,10 +44,44 @@ public class ResourceDto {
     /**
      * ID of the orphanage that owns this resource.
      */
-    private Long orphanageId;
+    private String orphanageName;
 
     /**
      * Current status of the resource.
      */
     private ResourceStatus status;
+
+    /**
+     * Creation date of the resource.
+     */
+    private LocalDateTime createdAt;
+
+    /**
+     * Last update date of the resource.
+     */
+    private LocalDateTime updatedAt;
+
+    // Getters
+    public Long getId() { return id; }
+    public String getName() { return name; }
+    public String getDescription() { return description; }
+    public ResourceCategory getCategory() { return category; }
+    public Integer getQuantity() { return quantity; }
+    public String getUnit() { return unit; }
+    public String getOrphanageName() { return orphanageName; }
+    public ResourceStatus getStatus() { return status; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    // Setters
+    public void setId(Long id) { this.id = id; }
+    public void setName(String name) { this.name = name; }
+    public void setDescription(String description) { this.description = description; }
+    public void setCategory(ResourceCategory category) { this.category = category; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public void setUnit(String unit) { this.unit = unit; }
+    public void setOrphanageName(String orphanageName) { this.orphanageName = orphanageName; }
+    public void setStatus(ResourceStatus status) { this.status = status; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 } 

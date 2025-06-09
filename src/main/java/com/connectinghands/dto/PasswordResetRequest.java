@@ -10,4 +10,7 @@ public class PasswordResetRequest {
 
     @NotBlank(message = "New password is required")
     private String newPassword;
+
+    public String getToken() { return token; }
+    public String getNewPassword() { return newPassword; }
 } 

@@ -15,47 +15,59 @@ public interface MessageService {
     /**
      * Send a new message from the current user to a receiver.
      *
-     * @param request The message creation request
+     * @param request The request containing sender and receiver IDs and message content
      * @return The created message DTO
      */
     MessageDto sendMessage(CreateMessageRequest request);
 
     /**
-     * Get a paginated list of messages between the current user and another user.
+     * Get a message by its ID.
      *
-     * @param otherUserId The other user's ID
-     * @param pageable Pagination information
-     * @return Page of message DTOs
+     * @param id The message ID
+     * @return The message DTO
      */
-    Page<MessageDto> getConversation(Long otherUserId, Pageable pageable);
+    MessageDto getMessage(Long id);
 
     /**
-     * Get a paginated list of messages received by the current user.
+     * Get a paginated list of messages between two users.
      *
+     * @param userId1 The first user's ID
+     * @param userId2 The second user's ID
      * @param pageable Pagination information
      * @return Page of message DTOs
      */
-    Page<MessageDto> getInbox(Pageable pageable);
+    Page<MessageDto> getConversation(Long userId1, Long userId2, Pageable pageable);
 
     /**
-     * Get a paginated list of messages sent by the current user.
+     * Get a paginated list of messages received by a user.
      *
+     * @param userId The user's ID
      * @param pageable Pagination information
      * @return Page of message DTOs
      */
-    Page<MessageDto> getSent(Pageable pageable);
+    Page<MessageDto> getInbox(Long userId, Pageable pageable);
+
+    /**
+     * Get a paginated list of messages sent by a user.
+     *
+     * @param userId The user's ID
+     * @param pageable Pagination information
+     * @return Page of message DTOs
+     */
+    Page<MessageDto> getSent(Long userId, Pageable pageable);
 
     /**
      * Mark a message as read by the current user.
      *
-     * @param messageId The message ID
+     * @param id The message ID
      */
-    void markAsRead(Long messageId);
+    void markAsRead(Long id);
 
     /**
-     * Count the number of unread messages for the current user.
+     * Count the number of unread messages for a user.
      *
+     * @param userId The user's ID
      * @return Number of unread messages
      */
-    long countUnread();
+    Long countUnread(Long userId);
 } 

@@ -44,4 +44,11 @@ public class UpdateResourceRequest {
      * Updated status of the resource request.
      */
     private ResourceRequestStatus status;
+
+    public String getName() { return name; }
+    public String getDescription() { return description; }
+    public String getCategory() { return category; }
+    public Integer getQuantity() { return quantity; }
+    public String getUnit() { return unit; }
+    public String getStatus() { return status.toString(); }
 } 

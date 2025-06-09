@@ -19,6 +19,7 @@ public class CreateOrphanageRequest {
     @Size(min = 3, max = 100, message = "Name must be between 3 and 100 characters")
     private String name;
 
+    @NotBlank(message = "Description is required")
     @Size(max = 1000, message = "Description cannot exceed 1000 characters")
     private String description;
 
@@ -59,6 +60,38 @@ public class CreateOrphanageRequest {
     @Positive(message = "Capacity must be a positive number")
     private Integer capacity;
 
+    @NotNull(message = "Current children count is required")
+    @Positive(message = "Current children count must be positive")
+    private Integer currentChildren;
+
     @NotBlank(message = "Verification documents are required")
     private String verificationDocuments;
+
+    public String getName() { return name; }
+    public String getDescription() { return description; }
+    public String getAddress() { return address; }
+    public String getCity() { return city; }
+    public String getState() { return state; }
+    public String getCountry() { return country; }
+    public String getPostalCode() { return postalCode; }
+    public String getPhone() { return phone; }
+    public String getEmail() { return email; }
+    public String getWebsite() { return website; }
+    public Integer getCapacity() { return capacity; }
+    public Integer getCurrentChildren() { return currentChildren; }
+    public String getVerificationDocuments() { return verificationDocuments; }
+
+    public void setName(String name) { this.name = name; }
+    public void setDescription(String description) { this.description = description; }
+    public void setAddress(String address) { this.address = address; }
+    public void setCity(String city) { this.city = city; }
+    public void setState(String state) { this.state = state; }
+    public void setCountry(String country) { this.country = country; }
+    public void setPostalCode(String postalCode) { this.postalCode = postalCode; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public void setEmail(String email) { this.email = email; }
+    public void setWebsite(String website) { this.website = website; }
+    public void setCapacity(Integer capacity) { this.capacity = capacity; }
+    public void setCurrentChildren(Integer currentChildren) { this.currentChildren = currentChildren; }
+    public void setVerificationDocuments(String verificationDocuments) { this.verificationDocuments = verificationDocuments; }
 } 

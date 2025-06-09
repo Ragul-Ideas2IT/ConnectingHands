@@ -398,8 +398,19 @@ graph TD
 | BE-002 | Security Infrastructure | Completed | - | - | - |
 | BE-003 | Database Migration | Completed | - | - | - |
 | BE-004 | User Management | Completed | - | - | - |
+| BE-005 | Orphanage Management | Completed | - | - | - |
 | BE-006 | Resource Management | Completed | - | - | - |
-| ... | ... | ... | ... | ... | ... |
+| BE-007 | Donation System | Completed | - | - | - |
+| BE-008 | Resource Request System | Completed | - | - | - |
+| BE-009 | Messaging System | Completed | - | - | - |
+| BE-010 | Audit Logging | Completed | - | - | - |
+| BE-011 | Reporting System | Completed | - | - | - |
+| BE-012 | API Documentation | Completed | - | - | - |
+| BE-013 | Unit Testing | In Progress | - | - | - |
+| BE-014 | Integration Testing | Not Started | - | - | - |
+| BE-015 | Performance Optimization | Not Started | - | - | - |
+| BE-016 | CI/CD Pipeline | Not Started | - | - | - |
+| BE-017 | Monitoring and Logging | Not Started | - | - | - |
 
 ## Notes
 - Story points are based on Fibonacci sequence (1, 2, 3, 5, 8, 13)

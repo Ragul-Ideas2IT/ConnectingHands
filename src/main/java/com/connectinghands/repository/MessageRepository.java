@@ -60,4 +60,10 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      * @return Page of messages
      */
     Page<Message> findByReceiverOrderByCreatedAtDesc(User receiver, Pageable pageable);
+
+    Page<Message> findBySenderIdAndReceiverIdOrReceiverIdAndSenderId(
+        Long senderId1, Long receiverId1, Long senderId2, Long receiverId2, Pageable pageable);
+    Page<Message> findByReceiverId(Long receiverId, Pageable pageable);
+    Page<Message> findBySenderId(Long senderId, Pageable pageable);
+    Long countByReceiverIdAndReadFalse(Long receiverId);
 } 

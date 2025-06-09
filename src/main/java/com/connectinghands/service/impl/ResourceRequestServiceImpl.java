@@ -4,6 +4,7 @@ import com.connectinghands.dto.CreateResourceRequest;
 import com.connectinghands.dto.ResourceRequestDto;
 import com.connectinghands.dto.UpdateResourceRequest;
 import com.connectinghands.entity.Orphanage;
+import com.connectinghands.entity.ResourceCategory;
 import com.connectinghands.entity.ResourceRequest;
 import com.connectinghands.entity.ResourceRequestStatus;
 import com.connectinghands.exception.ResourceNotFoundException;
@@ -13,7 +14,8 @@ import com.connectinghands.service.AuditLogService;
 import com.connectinghands.service.ResourceRequestService;
 import com.connectinghands.service.SecurityService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +29,6 @@ import java.util.stream.Collectors;
  *
  * @author Ragul Venkatesan
  */
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ResourceRequestServiceImpl implements ResourceRequestService {
@@ -39,15 +40,13 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
     @Override
     @Transactional
     public ResourceRequestDto createResourceRequest(CreateResourceRequest request) {
-        log.info("Creating new resource request for orphanage: {}", request.getOrphanageId());
-        
         Orphanage orphanage = orphanageRepository.findById(request.getOrphanageId())
                 .orElseThrow(() -> new ResourceNotFoundException("Orphanage not found"));
 
         ResourceRequest resourceRequest = new ResourceRequest();
         resourceRequest.setName(request.getName());
         resourceRequest.setDescription(request.getDescription());
-        resourceRequest.setCategory(request.getCategory());
+        resourceRequest.setCategory(ResourceCategory.valueOf(request.getCategory()));
         resourceRequest.setQuantity(request.getQuantity());
         resourceRequest.setUnit(request.getUnit());
         resourceRequest.setOrphanage(orphanage);
@@ -61,55 +60,45 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
             savedRequest.getId()
         );
 
-        return mapToDto(savedRequest);
+        return convertToDto(savedRequest);
     }
 
     @Override
     @Transactional(readOnly = true)
     public ResourceRequestDto getResourceRequest(Long id) {
-        log.info("Retrieving resource request: {}", id);
-        
         ResourceRequest resourceRequest = resourceRequestRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Resource request not found"));
 
-        return mapToDto(resourceRequest);
+        return convertToDto(resourceRequest);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ResourceRequestDto> getAllResourceRequests() {
-        log.info("Retrieving all resource requests");
-        
         return resourceRequestRepository.findAll().stream()
-                .map(this::mapToDto)
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ResourceRequestDto> getResourceRequestsByOrphanage(Long orphanageId) {
-        log.info("Retrieving resource requests for orphanage: {}", orphanageId);
-        
         return resourceRequestRepository.findByOrphanageId(orphanageId).stream()
-                .map(this::mapToDto)
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ResourceRequestDto> getResourceRequestsByStatus(ResourceRequestStatus status) {
-        log.info("Retrieving resource requests with status: {}", status);
-        
         return resourceRequestRepository.findByStatus(status).stream()
-                .map(this::mapToDto)
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public ResourceRequestDto updateResourceRequest(Long id, UpdateResourceRequest request) {
-        log.info("Updating resource request: {}", id);
-        
         ResourceRequest resourceRequest = resourceRequestRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Resource request not found"));
 
@@ -120,7 +109,7 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
             resourceRequest.setDescription(request.getDescription());
         }
         if (request.getCategory() != null) {
-            resourceRequest.setCategory(request.getCategory());
+            resourceRequest.setCategory(ResourceCategory.valueOf(request.getCategory()));
         }
         if (request.getQuantity() != null) {
             resourceRequest.setQuantity(request.getQuantity());
@@ -129,7 +118,7 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
             resourceRequest.setUnit(request.getUnit());
         }
         if (request.getStatus() != null) {
-            resourceRequest.setStatus(request.getStatus());
+            resourceRequest.setStatus(ResourceRequestStatus.valueOf(request.getStatus()));
             if (request.getStatus() == ResourceRequestStatus.FULFILLED) {
                 resourceRequest.setFulfilledBy(securityService.getCurrentUserId());
                 resourceRequest.setFulfilledAt(LocalDateTime.now());
@@ -144,14 +133,12 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
             id
         );
 
-        return mapToDto(updatedRequest);
+        return convertToDto(updatedRequest);
     }
 
     @Override
     @Transactional
     public void deleteResourceRequest(Long id) {
-        log.info("Deleting resource request: {}", id);
-        
         if (!resourceRequestRepository.existsById(id)) {
             throw new ResourceNotFoundException("Resource request not found");
         }
@@ -165,7 +152,7 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
         );
     }
 
-    private ResourceRequestDto mapToDto(ResourceRequest request) {
+    private ResourceRequestDto convertToDto(ResourceRequest request) {
         ResourceRequestDto dto = new ResourceRequestDto();
         dto.setId(request.getId());
         dto.setName(request.getName());
@@ -173,6 +160,7 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
         dto.setCategory(request.getCategory());
         dto.setQuantity(request.getQuantity());
         dto.setUnit(request.getUnit());
+        dto.setOrphanageName(request.getOrphanage().getName());
         dto.setOrphanageId(request.getOrphanage().getId());
         dto.setStatus(request.getStatus());
         dto.setFulfilledBy(request.getFulfilledBy());
