@@ -27,6 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Test class for ResourceController.
  * Tests all CRUD operations and security constraints.
+ *
+ * @author Ragul Venkatesan
  */
 @WebMvcTest(ResourceController.class)
 class ResourceControllerTest {
@@ -40,6 +42,10 @@ class ResourceControllerTest {
     @MockBean
     private ResourceService resourceService;
 
+    /**
+     * Tests creating a resource with admin role.
+     * Verifies successful creation and response structure.
+     */
     @Test
     @WithMockUser(roles = "ADMIN")
     void createResource_ShouldReturnCreatedResource() throws Exception {
@@ -80,6 +86,10 @@ class ResourceControllerTest {
         verify(resourceService).createResource(any(CreateResourceRequest.class));
     }
 
+    /**
+     * Tests retrieving a resource by ID.
+     * Verifies successful retrieval and response structure.
+     */
     @Test
     @WithMockUser
     void getResource_ShouldReturnResource() throws Exception {
@@ -109,6 +119,10 @@ class ResourceControllerTest {
         verify(resourceService).getResource(1L);
     }
 
+    /**
+     * Tests retrieving all resources.
+     * Verifies successful retrieval and response structure.
+     */
     @Test
     @WithMockUser
     void getAllResources_ShouldReturnResourceList() throws Exception {
@@ -136,6 +150,10 @@ class ResourceControllerTest {
         verify(resourceService).getAllResources();
     }
 
+    /**
+     * Tests updating a resource with admin role.
+     * Verifies successful update and response structure.
+     */
     @Test
     @WithMockUser(roles = "ADMIN")
     void updateResource_ShouldReturnUpdatedResource() throws Exception {
@@ -174,6 +192,10 @@ class ResourceControllerTest {
         verify(resourceService).updateResource(eq(1L), any(UpdateResourceRequest.class));
     }
 
+    /**
+     * Tests deleting a resource with admin role.
+     * Verifies successful deletion.
+     */
     @Test
     @WithMockUser(roles = "ADMIN")
     void deleteResource_ShouldReturnOk() throws Exception {
@@ -185,6 +207,10 @@ class ResourceControllerTest {
         verify(resourceService).deleteResource(1L);
     }
 
+    /**
+     * Tests creating a resource without admin role.
+     * Verifies that the request is forbidden.
+     */
     @Test
     @WithMockUser
     void createResource_WithoutAdminRole_ShouldReturnForbidden() throws Exception {
@@ -202,6 +228,10 @@ class ResourceControllerTest {
         verify(resourceService, never()).createResource(any());
     }
 
+    /**
+     * Tests updating a resource without admin role.
+     * Verifies that the request is forbidden.
+     */
     @Test
     @WithMockUser
     void updateResource_WithoutAdminRole_ShouldReturnForbidden() throws Exception {
@@ -219,6 +249,10 @@ class ResourceControllerTest {
         verify(resourceService, never()).updateResource(any(), any());
     }
 
+    /**
+     * Tests deleting a resource without admin role.
+     * Verifies that the request is forbidden.
+     */
     @Test
     @WithMockUser
     void deleteResource_WithoutAdminRole_ShouldReturnForbidden() throws Exception {

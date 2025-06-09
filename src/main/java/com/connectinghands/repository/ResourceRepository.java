@@ -6,8 +6,11 @@ import org.springframework.stereotype.Repository;
 
 /**
  * Repository interface for managing Resource entities.
- * Provides methods for CRUD operations on resources.
+ * Provides CRUD operations and custom queries for resources.
+ *
+ * @author Ragul Venkatesan
  */
 @Repository
 public interface ResourceRepository extends JpaRepository<Resource, Long> {
+    // Custom queries can be added here as needed
 } 

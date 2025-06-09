@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controller for managing resources.
- * Provides endpoints for CRUD operations on resources.
+ * REST controller for managing resources.
+ * Provides endpoints for CRUD operations on resources with proper security constraints.
+ *
+ * @author Ragul Venkatesan
  */
 @RestController
 @RequestMapping("/resources")
@@ -24,8 +26,10 @@ public class ResourceController {
 
     /**
      * Creates a new resource.
-     * @param request The request containing resource details.
-     * @return The created resource DTO.
+     * Requires ADMIN role.
+     *
+     * @param request The request containing resource details
+     * @return The created resource DTO
      */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -35,8 +39,10 @@ public class ResourceController {
 
     /**
      * Retrieves a resource by its ID.
-     * @param id The ID of the resource.
-     * @return The resource DTO.
+     * Accessible to all authenticated users.
+     *
+     * @param id The ID of the resource
+     * @return The resource DTO
      */
     @GetMapping("/{id}")
     public ResponseEntity<ResourceDto> getResource(@PathVariable Long id) {
@@ -45,7 +51,9 @@ public class ResourceController {
 
     /**
      * Retrieves all resources.
-     * @return A list of resource DTOs.
+     * Accessible to all authenticated users.
+     *
+     * @return A list of resource DTOs
      */
     @GetMapping
     public ResponseEntity<List<ResourceDto>> getAllResources() {
@@ -54,9 +62,11 @@ public class ResourceController {
 
     /**
      * Updates an existing resource.
-     * @param id The ID of the resource to update.
-     * @param request The request containing updated resource details.
-     * @return The updated resource DTO.
+     * Requires ADMIN role.
+     *
+     * @param id The ID of the resource to update
+     * @param request The request containing updated resource details
+     * @return The updated resource DTO
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -66,8 +76,10 @@ public class ResourceController {
 
     /**
      * Deletes a resource by its ID.
-     * @param id The ID of the resource to delete.
-     * @return A response indicating success.
+     * Requires ADMIN role.
+     *
+     * @param id The ID of the resource to delete
+     * @return A response indicating success
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")

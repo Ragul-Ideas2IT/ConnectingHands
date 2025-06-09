@@ -8,40 +8,47 @@ import java.util.List;
 
 /**
  * Service interface for managing resources.
- * Defines methods for CRUD operations on resources.
+ * Defines operations for creating, reading, updating, and deleting resources.
+ *
+ * @author Ragul Venkatesan
  */
 public interface ResourceService {
     /**
      * Creates a new resource.
-     * @param request The request containing resource details.
-     * @return The created resource DTO.
+     *
+     * @param request The request containing resource details
+     * @return The created resource DTO
      */
     ResourceDto createResource(CreateResourceRequest request);
 
     /**
      * Retrieves a resource by its ID.
-     * @param id The ID of the resource.
-     * @return The resource DTO.
+     *
+     * @param id The ID of the resource to retrieve
+     * @return The resource DTO
      */
     ResourceDto getResource(Long id);
 
     /**
      * Retrieves all resources.
-     * @return A list of resource DTOs.
+     *
+     * @return A list of all resource DTOs
      */
     List<ResourceDto> getAllResources();
 
     /**
      * Updates an existing resource.
-     * @param id The ID of the resource to update.
-     * @param request The request containing updated resource details.
-     * @return The updated resource DTO.
+     *
+     * @param id The ID of the resource to update
+     * @param request The request containing updated resource details
+     * @return The updated resource DTO
      */
     ResourceDto updateResource(Long id, UpdateResourceRequest request);
 
     /**
      * Deletes a resource by its ID.
-     * @param id The ID of the resource to delete.
+     *
+     * @param id The ID of the resource to delete
      */
     void deleteResource(Long id);
 } 
